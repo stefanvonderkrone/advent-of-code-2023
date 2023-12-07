@@ -16,7 +16,7 @@ const (
     FOUR_OF_A_KIND = 1001
     FULL_HOUSE = 110
     THREE_OF_A_KIND = 102
-    TWO_PAIR = 31
+    TWO_PAIR = 21
     ONE_PAIR = 13
     HIGH_CARD = 5
 )
@@ -27,7 +27,7 @@ const (
     ASS = 14
     KING = 13
     QUEEN = 12
-    JACK = 11
+    JACK = 1
     TEN = 10
     NINE = 9
     EIGHT = 8
@@ -55,10 +55,37 @@ var cardsMap = map[rune]CardType {
     '2': TWO,
 }
 
+func upgradeHandType(ht HandType, numJs int) HandType {
+    switch(ht) {
+        case HIGH_CARD:
+            return ONE_PAIR
+        case ONE_PAIR:
+            return THREE_OF_A_KIND
+        case TWO_PAIR:
+            if numJs == 2 {
+                return FOUR_OF_A_KIND
+            }
+            return FULL_HOUSE
+        case THREE_OF_A_KIND:
+            return FOUR_OF_A_KIND
+        case FULL_HOUSE:
+            return FIVE_OF_A_KIND
+        case FOUR_OF_A_KIND:
+            return FIVE_OF_A_KIND
+        case FIVE_OF_A_KIND:
+            return FIVE_OF_A_KIND
+    }
+    return ht
+}
+
 func handType(hand []CardType) HandType {
     cardCounts := make([]int, 15)
+    numJs := 0;
     for _, cardType := range hand {
         cardCounts[cardType]++
+        if cardType == JACK {
+            numJs++;
+        }
     }
     counts := make([]int, len(hand))
     for _, count := range cardCounts {
@@ -70,7 +97,11 @@ func handType(hand []CardType) HandType {
     for i, n := range counts {
         hash += n * int(math.Pow10(i))
     }
-    return HandType(hash)
+    ht := HandType(hash)
+    if numJs > 0 {
+        ht = upgradeHandType(ht, numJs)
+    }
+    return ht
 }
 
 func parseHand(hand []rune) []CardType {
