@@ -35,6 +35,10 @@ var cache = map[string]int{}
 
 // inspired by https://youtu.be/g3Ms5e7Jdqo?si=V-BZWDgR5X0fZiVg
 
+func setCache(key string, result int) {
+    cache[key] = result
+}
+
 func count(cfg string, nums []int) int {
     if cfg == "" {
         if len(nums) == 0 {
@@ -58,6 +62,12 @@ func count(cfg string, nums []int) int {
 
     result := 0
 
+    setCache := func() {
+        cache[key] = result
+    }
+
+    defer setCache()
+
     if cfg[0] == '.' || cfg[0] == '?' {
         result += count(cfg[1:], nums)
     }
@@ -78,8 +88,6 @@ func count(cfg string, nums []int) int {
             result += count(cfg[startIndex:], nums[1:])
         }
     }
-
-    cache[key] = result
 
     return result
 }
