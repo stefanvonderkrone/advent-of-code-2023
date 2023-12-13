@@ -31,6 +31,8 @@ func readLine(line string) (string, []int) {
     return order, amounts
 }
 
+var cache = map[string]int{}
+
 func count(cfg string, nums []int) int {
     if cfg == "" {
         if len(nums) == 0 {
@@ -44,6 +46,12 @@ func count(cfg string, nums []int) int {
             return 0
         }
         return 1
+    }
+
+    key := strings.Join([]string{cfg, fmt.Sprintf("%+v", nums)}, " ")
+
+    if r, ok := cache[key]; ok {
+        return r
     }
 
     result := 0
@@ -69,6 +77,8 @@ func count(cfg string, nums []int) int {
         }
     }
 
+    cache[key] = result
+
     return result
 }
 
@@ -81,6 +91,15 @@ func main() {
         line := scanner.Text()
         // fmt.Print(line)
         cfg, nums := readLine(line)
+        // fmt.Printf("%+v\n", nums)
+        cfg = strings.Join([]string{cfg, cfg, cfg, cfg, cfg}, "?")
+        tmpNums := nums
+        nums = append(nums, tmpNums...)
+        nums = append(nums, tmpNums...)
+        nums = append(nums, tmpNums...)
+        nums = append(nums, tmpNums...)
+        // fmt.Printf("%+v\n", nums)
+        // fmt.Print("-----------\n")
         sum += count(cfg, nums)
         // sum += arrangement.countPossibleArrangements()
         //fmt.Printf("%+v\n", arrangement)
