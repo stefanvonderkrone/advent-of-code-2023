@@ -33,6 +33,8 @@ func readLine(line string) (string, []int) {
 
 var cache = map[string]int{}
 
+// inspired by https://youtu.be/g3Ms5e7Jdqo?si=V-BZWDgR5X0fZiVg
+
 func count(cfg string, nums []int) int {
     if cfg == "" {
         if len(nums) == 0 {
